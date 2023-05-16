@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from google.auth import identity_toolkit
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # import your database models here, e.g.
@@ -50,12 +51,17 @@ def login():
     # Handle user login
     return render_template('login.html')
 
+client = identity_toolkit.Client(api_key="AIzaSyC_3wLUWHB2i3KW0_7jLquR3HE-GohpS6o")
+
 @app.route('/logout')
 @login_required
-def logout():
-    # Handle user logout
-    logout_user()
-    return redirect(url_for('login'))
+def login(email, password):
+    try:
+        response = client.sign_in_with_password(email, password)
+        return response
+    except Exception as e:
+        # Handle error
+        print(e)
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
