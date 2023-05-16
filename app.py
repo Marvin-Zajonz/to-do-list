@@ -19,26 +19,54 @@ login_manager.init_app(app)
 
 client = identity_toolkit.Client(api_key="AIzaSyC_3wLUWHB2i3KW0_7jLquR3HE-GohpS6o")
 
+def verify_id_token(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        id_token = request.headers.get('Authorization')
+        if id_token:
+            try:
+                # Verify the ID token
+                decoded_token = client.verify_id_token(id_token)
+                # You can access the user's email and other claims from the decoded token
+                email = decoded_token['email']
+                # Perform additional validation if needed
+                # Load the user from the database based on the email or other claims
+                user = User.query.filter_by(email=email).first()
+                if user:
+                    # Set the current user
+                    login_user(user)
+                    return f(*args, **kwargs)
+            except Exception as e:
+                # Handle invalid or expired ID token
+                print(e)
+        # Return an error response or redirect to the login page
+        return redirect(url_for('login'))
+    return decorated_function
+
 @app.route('/')
 @login_required
+@verify_id_token
 def home():
     # Display the dashboard page with an overview of tasks
     return render_template('dashboard.html')
 
 @app.route('/task', methods=['GET', 'POST'])
 @login_required
+@verify_id_token
 def create_task():
     # Handle task creation
     return render_template('create_task.html')
 
 @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
+@verify_id_token
 def view_task(task_id):
     # Handle task viewing and updating
     return render_template('task_detail.html')
 
 @app.route('/task/<int:task_id>/delete', methods=['POST'])
 @login_required
+@verify_id_token
 def delete_task(task_id):
     # Handle task deletion
     return redirect(url_for('home'))
@@ -88,6 +116,7 @@ def logout():
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
+@verify_id_token
 def settings():
     # Handle user settings
     return render_template('settings.html')
