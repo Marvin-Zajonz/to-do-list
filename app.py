@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from google.auth import identity_toolkit
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,13 +9,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 # configure your app, e.g.
-# app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['SECRET_KEY'] = 'your-secret-key'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'your-database-uri'
 # db.init_app(app)
 
-# login_manager = LoginManager()
-# login_manager.login_view = 'login'
-# login_manager.init_app(app)
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+client = identity_toolkit.Client(api_key="AIzaSyC_3wLUWHB2i3KW0_7jLquR3HE-GohpS6o")
 
 @app.route('/')
 @login_required
@@ -46,28 +48,55 @@ def register():
     # Handle user registration
     return render_template('register.html')
 
+from flask_login import login_user, logout_user
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Handle user login
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Perform authentication and validation
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password_hash, password):
+            # Log in the user using Flask-Login's login_user() function
+            login_user(user)
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid email or password. Please try again.')
+
+    # Render the login form
     return render_template('login.html')
 
-client = identity_toolkit.Client(api_key="AIzaSyC_3wLUWHB2i3KW0_7jLquR3HE-GohpS6o")
 
 @app.route('/logout')
 @login_required
-def login(email, password):
-    try:
-        response = client.sign_in_with_password(email, password)
-        return response
-    except Exception as e:
-        # Handle error
-        print(e)
+def logout():
+    # Log out the user using Flask-Login's logout_user() function
+    logout_user()
+    return redirect(url_for('login'))
+
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    # Log out the user using Flask-Login's logout_user() function
+    logout_user()
+    return redirect(url_for('login'))
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
     # Handle user settings
     return render_template('settings.html')
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Replace this with your own logic to load the user from the database based on the user_id
+    return User.query.get(int(user_id))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
