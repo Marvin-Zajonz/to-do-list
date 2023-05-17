@@ -17,7 +17,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-client = identity_toolkit.Client(api_key="***REMOVED***")
+client = identity_toolkit.Client(api_key="api-key")
 
 def verify_id_token(f):
     @wraps(f)
