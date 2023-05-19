@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard</h1>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tasks Due Today</h5>
+            <p class="card-text">3 tasks</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Overdue Tasks</h5>
+            <p class="card-text">5 tasks</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Completed Tasks</h5>
+            <p class="card-text">10 tasks</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Task List</h2>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Task Name</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Task 1</td>
+              <td>2023-05-20</td>
+              <td><span class="badge badge-success">High</span></td>
+            </tr>
+            <tr>
+              <td>Task 2</td>
+              <td>2023-05-21</td>
+              <td><span class="badge badge-warning">Medium</span></td>
+            </tr>
+            <tr>
+              <td>Task 3</td>
+              <td>2023-05-22</td>
+              <td><span class="badge badge-primary">Low</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h2>Navigation</h2>
+        <ul class="list-group">
+          <li class="list-group-item"><a href="#">Add New Task</a></li>
+          <li class="list-group-item"><a href="#">View Completed Tasks</a></li>
+          <li class="list-group-item"><a href="#">Change App Settings</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
