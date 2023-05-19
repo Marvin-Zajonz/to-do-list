@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -29,6 +30,26 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Create the SQLAlchemy instance
 db = SQLAlchemy(app)
 
+class User(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+class Task(db.Model):
+    task_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    task_name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(500), nullable=True)  # Assuming description can be null
+    due_date = db.Column(db.DateTime, nullable=False)
+    priority = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(120), nullable=False)
+
+    def __repr__(self):
+        return '<Task %r>' % self.task_name
 
 google_api_token = os.getenv("GOOGLE_API_TOKEN")
 
