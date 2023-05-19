@@ -51,6 +51,8 @@ class Task(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.task_name
 
+db.create_all()
+
 google_api_token = os.getenv("GOOGLE_API_TOKEN")
 
 
