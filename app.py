@@ -5,10 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-<<<<<<< HEAD
 from datetime import datetime
-=======
->>>>>>> 2c4da091eef2ccca3bcd27258d012dfd2470c4de
 
 load_dotenv()
 
