@@ -33,16 +33,16 @@ const loginUser = (email, password) => {
     });
 };
 
-// Track User Authentication State
-onAuthStateChanged(auth, (user) => {
+// Set up an authentication state observer
+firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    // User is logged in
-    // Update UI or redirect to authenticated routes
+    // User is signed in
+    // You can perform actions for a signed-in user, such as redirecting to the dashboard
+    console.log('User is signed in');
   } else {
-    // User is logged out
-    // Update UI or redirect to login page
+    // User is signed out
+    // You can perform actions for a signed-out user, such as redirecting to the login page
+    console.log('User is signed out');
   }
 });
 
-// Export the functions to be used in other modules or scripts
-export { registerUser, loginUser };
