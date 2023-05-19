@@ -5,7 +5,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+<<<<<<< HEAD
 from datetime import datetime
+=======
+>>>>>>> 2c4da091eef2ccca3bcd27258d012dfd2470c4de
 
 load_dotenv()
 
@@ -29,7 +32,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Create the SQLAlchemy instance
 db = SQLAlchemy(app)
-
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
