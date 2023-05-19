@@ -3,20 +3,43 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from google.auth import identity_toolkit
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
-import dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
 load_dotenv()
-google_api_token = os.getenv("GOOGLE_API_TOKEN")
 
-# import your database models here, e.g.
-# from models import db, User, Task
+
+# Get environment variables
+db_username = os.environ.get('DB_USERNAME')
+db_password = os.environ.get('DB_PASSWORD')
+db_host = os.environ.get('DB_HOST')
+db_name = os.environ.get('DB_NAME')
+
+# Construct the MySQL URI
+mysql_uri = f"mysql://{db_username}:{db_password}@{db_host}/{db_name}"
+
 
 app = Flask(__name__)
 
-# configure your app, e.g.
+# Configure the Flask app
 app.config['SECRET_KEY'] = 'your-secret-key'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'your-database-uri'
-# db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = mysql_uri
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Create the SQLAlchemy instance
+db = SQLAlchemy(app)
+
+
+google_api_token = os.getenv("GOOGLE_API_TOKEN")
+
+
+# Configure GCP API key
+app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['SQLALCHEMY_DATABASE_URI'] = mysql_uri
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
