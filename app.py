@@ -6,6 +6,8 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime
+from firebase_admin import auth
+
 
 load_dotenv()
 
@@ -87,9 +89,9 @@ def verify_id_token(f):
                     # Set the current user
                     login_user(user)
                     return f(*args, **kwargs)
-            except Exception as e:
-                # Handle invalid or expired ID token
-                print(e)
+                except auth.InvalidIdTokenError as e:
+                    # Handle invalid or expired ID token
+                    print(e)
         # Return an error response or redirect to the login page
         return redirect(url_for('login'))
     return decorated_function
@@ -177,10 +179,22 @@ def delete_task(task_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    # Handle user registration
-    return render_template('register.html')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
 
-from flask_login import login_user, logout_user
+        # Create a new user and save it to the database
+        hashed_password = generate_password_hash(password)
+        user = User(email=email, password_hash=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+
+        # Log in the user using Flask-Login's login_user() function
+        login_user(user)
+        return redirect(url_for('home'))
+
+    # Render the registration form
+    return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
