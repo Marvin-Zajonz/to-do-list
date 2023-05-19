@@ -131,14 +131,49 @@ def create_task():
 @verify_id_token
 def view_task(task_id):
     # Handle task viewing and updating
-    return render_template('task_detail.html')
+    task = Task.query.get(task_id)
+
+    if task.user_id != current_user.user_id:
+        flash("You don't have permission to view this task.")
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        # Assume you have form fields for task_name, description, due_date, priority, status
+        task.task_name = request.form['task_name']
+        task.description = request.form['description']
+        task.due_date = request.form['due_date']
+        task.priority = request.form['priority']
+        task.status = request.form['status']
+
+        try:
+            db.session.commit()
+            return redirect(url_for('home'))
+        except Exception as e:
+            print(e)  # You may want to log errors in a real application
+            flash("An error occurred while updating the task")
+
+    return render_template('task_detail.html', task=task)
 
 @app.route('/task/<int:task_id>/delete', methods=['POST'])
 @login_required
 @verify_id_token
 def delete_task(task_id):
     # Handle task deletion
+    task = Task.query.get(task_id)
+
+    if task.user_id != current_user.user_id:
+        flash("You don't have permission to delete this task.")
+        return redirect(url_for('home'))
+
+    try:
+        db.session.delete(task)
+        db.session.commit()
+    except Exception as e:
+        print(e)  # You may want to log errors in a real application
+        flash("An error occurred while deleting the task")
+
     return redirect(url_for('home'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
