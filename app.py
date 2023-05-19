@@ -99,13 +99,31 @@ def verify_id_token(f):
 @verify_id_token
 def home():
     # Display the dashboard page with an overview of tasks
-    return render_template('dashboard.html')
+    tasks = Task.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('dashboard.html', tasks=tasks)
 
 @app.route('/task', methods=['GET', 'POST'])
 @login_required
 @verify_id_token
 def create_task():
     # Handle task creation
+    if request.method == 'POST':
+        task_name = request.form['task_name']
+        description = request.form['description']
+        due_date = request.form['due_date']
+        priority = request.form['priority']
+        status = "In Progress"  # Default status
+
+        new_task = Task(task_name=task_name, description=description, due_date=due_date, priority=priority, status=status, user_id=current_user.user_id)
+
+        try:
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect(url_for('home'))
+        except Exception as e:
+            print(e)  # You may want to log errors in a real application
+            flash("An error occurred while creating the task")
+
     return render_template('create_task.html')
 
 @app.route('/task/<int:task_id>', methods=['GET', 'POST'])
