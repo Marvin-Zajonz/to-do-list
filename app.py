@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Get environment variables from .env
+# Get environment variables from
 db_username = os.environ.get('DB_USERNAME')
 db_password = os.environ.get('DB_PASSWORD')
 db_host = os.environ.get('DB_HOST')
